@@ -1,5 +1,8 @@
 FROM java:8-jdk
 
+# Fix Hash Sum Mismatch causing from httpredir.debian.org
+RUN sed -i s/httpredir.debian.org/cdn-fastly.deb.debian.org/g /etc/apt/sources.list
+
 # Need some 32 bit libs for aapt and adb
 RUN dpkg --add-architecture i386 \
     && apt-get update && apt-get install -y --no-install-recommends \
@@ -23,18 +26,3 @@ tools,\
 platform-tools,\
 extra-android-m2repository,\
 extra-google-m2repository
-
-# Install Android tools and Maven repositories
-#
-# Dockers union FS interacts very badly with the Java in the `android`
-# command, deleting the content of tools/ during the update, because it
-# is on a lower layer.
-# Moving the tools directory forces it to be copied up to the writable
-# layer, after which updating tools works fine.
-#RUN mv $ANDROID_HOME/tools $ANDROID_HOME/foo; \
-#    mv $ANDROID_HOME/foo $ANDROID_HOME/tools; \
-#echo y | $ANDROID_HOME/tools/android update sdk --force --all --no-ui --filter \
-#tools,\
-#platform-tools,\
-#extra-android-m2repository,\
-#extra-google-m2repository
