@@ -3,6 +3,7 @@ FROM java:8-jdk
 # Need some 32 bit libs for aapt and adb
 RUN dpkg --add-architecture i386 \
     && apt-get update && apt-get install -y --no-install-recommends \
+        net-tools:i386 \
         libstdc++6:i386 \
         zlib1g:i386 \
     && rm -rf /var/lib/apt/lists/*
